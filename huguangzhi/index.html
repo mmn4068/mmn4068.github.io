@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>弧光之源2 - 战棋RPG系统解析与角色养成指南</title>
+<meta name="description" content="弧光之源2是一款日式战棋角色扮演游戏，本文介绍其战斗系统、职业转职、角色养成、剧情结构与新手入门要点，帮助玩家快速了解这部SRPG作品的核心玩法。">
+<meta name="keywords" content="弧光之源2,战棋RPG,SRPG,角色养成,职业转职,战斗系统,日式角色扮演">
+<script type="text/javascript" src="https://cdn.bdwgg.com/mh.js"></script>
+<style>
+  :root{
+    --bg:#0d1220;
+    --bg-soft:#141c30;
+    --panel:#1a2338;
+    --line:#2a3550;
+    --gold:#e8b23a;
+    --gold-soft:#f2d489;
+    --cyan:#5fd0d8;
+    --text:#e6ebf5;
+    --muted:#9aa7c0;
+    --radius:12px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:"Microsoft YaHei","PingFang SC","Hiragino Sans GB",system-ui,sans-serif;
+    line-height:1.75;
+    font-size:16px;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:inherit;text-decoration:none;}
+  img{max-width:100%;display:block;}
+
+  .wrap{width:100%;max-width:1180px;margin:0 auto;padding:0 20px;}
+
+  /* 顶部 */
+  header.site-head{
+    position:sticky;top:0;z-index:50;
+    background:rgba(13,18,32,.92);
+    backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--line);
+  }
+  .head-inner{
+    display:flex;align-items:center;justify-content:space-between;
+    gap:18px;height:66px;
+  }
+  .logo{
+    display:flex;align-items:center;gap:10px;
+    font-size:19px;font-weight:700;letter-spacing:.5px;
+    white-space:nowrap;
+  }
+  .logo .mark{
+    width:30px;height:30px;border-radius:8px;
+    background:linear-gradient(135deg,var(--gold),#a9761a);
+    display:flex;align-items:center;justify-content:center;
+    color:#1a1206;font-weight:900;font-size:15px;
+  }
+  nav.main-nav ul{
+    display:flex;gap:6px;list-style:none;flex-wrap:wrap;
+  }
+  nav.main-nav a{
+    display:block;padding:8px 13px;border-radius:8px;
+    font-size:14.5px;color:var(--muted);transition:.2s;
+  }
+  nav.main-nav a:hover{color:var(--gold-soft);background:rgba(232,178,58,.08);}
+
+  /* 首屏 */
+  .hero{
+    position:relative;
+    padding:64px 0 56px;
+    background:
+      radial-gradient(900px 380px at 12% 0%,rgba(95,208,216,.14),transparent 65%),
+      radial-gradient(700px 340px at 88% 12%,rgba(232,178,58,.13),transparent 62%),
+      var(--bg-soft);
+    border-bottom:1px solid var(--line);
+    overflow:hidden;
+  }
+  .hero::after{
+    content:"";position:absolute;inset:0;
+    background-image:linear-gradient(rgba(255,255,255,.028) 1px,transparent 1px),
+                     linear-gradient(90deg,rgba(255,255,255,.028) 1px,transparent 1px);
+    background-size:46px 46px;
+    pointer-events:none;
+  }
+  .hero-grid{
+    position:relative;z-index:2;
+    display:grid;grid-template-columns:1.35fr .9fr;gap:44px;align-items:center;
+  }
+  .tag{
+    display:inline-block;font-size:12.5px;letter-spacing:1.4px;
+    color:var(--cyan);border:1px solid rgba(95,208,216,.4);
+    padding:3px 11px;border-radius:999px;margin-bottom:16px;
+  }
+  .hero h1{
+    font-size:40px;line-height:1.28;font-weight:800;
+    letter-spacing:.5px;margin-bottom:16px;
+  }
+  .hero h1 em{
+    font-style:normal;
+    background:linear-gradient(100deg,var(--gold-soft),var(--gold));
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .hero p.lead{
+    color:var(--muted);font-size:16.5px;max-width:620px;margin-bottom:24px;
+  }
+  .hero-actions{display:flex;flex-wrap:wrap;gap:12px;}
+  .btn{
+    display:inline-block;padding:11px 22px;border-radius:9px;
+    font-size:15px;font-weight:600;transition:.2s;border:1px solid transparent;
+  }
+  .btn-primary{
+    background:linear-gradient(135deg,var(--gold),#c48f1f);
+    color:#1c1305;
+  }
+  .btn-primary:hover{filter:brightness(1.09);transform:translateY(-1px);}
+  .btn-ghost{
+    border-color:var(--line);color:var(--text);background:rgba(255,255,255,.02);
+  }
+  .btn-ghost:hover{border-color:var(--gold);color:var(--gold-soft);}
+
+  .hero-card{
+    background:linear-gradient(160deg,#1d2740,#151d2f);
+    border:1px solid var(--line);border-radius:16px;
+    padding:22px 22px 18px;
+    box-shadow:0 18px 44px rgba(0,0,0,.38);
+  }
+  .hero-card h2{
+    font-size:15px;color:var(--gold-soft);letter-spacing:1px;
+    margin-bottom:14px;font-weight:700;
+  }
+  .hero-card ul{list-style:none;display:grid;gap:11px;}
+  .hero-card li{
+    display:flex;gap:10px;font-size:14.5px;color:var(--muted);
+    padding-bottom:11px;border-bottom:1px dashed rgba(255,255,255,.07);
+  }
+  .hero-card li:last-child{border-bottom:none;padding-bottom:0;}
+  .hero-card li span.k{
+    color:var(--cyan);font-weight:700;flex-shrink:0;font-size:13.5px;
+    min-width:52px;
+  }
+
+  /* 通用区块 */
+  section{padding:58px 0;}
+  section.alt{background:var(--bg-soft);border-top:1px solid var(--line);border-bottom:1px solid var(--line);}
+  .sec-head{margin-bottom:30px;max-width:760px;}
+  .sec-head h2{
+    font-size:27px;font-weight:800;letter-spacing:.4px;
+    display:flex;align-items:center;gap:12px;
+  }
+  .sec-head h2::before{
+    content:"";width:5px;height:24px;border-radius:3px;
+    background:linear-gradient(var(--gold),var(--cyan));
+  }
+  .sec-head p{color:var(--muted);margin-top:10px;font-size:15.5px;}
+
+  /* 系统卡片 */
+  .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+  .card{
+    background:var(--panel);border:1px solid var(--line);
+    border-radius:var(--radius);padding:22px 20px;transition:.22s;
+  }
+  .card:hover{transform:translateY(-3px);border-color:rgba(232,178,58,.45);}
+  .card .ico{
+    width:40px;height:40px;border-radius:10px;
+    display:flex;align-items:center;justify-content:center;
+    font-size:18px;font-weight:800;margin-bottom:14px;
+    background:rgba(95,208,216,.13);color:var(--cyan);
+  }
+  .card h3{font-size:17.5px;margin-bottom:9px;font-weight:700;}
+  .card p{font-size:14.5px;color:var(--muted);}
+
+  /* 职业列表 */
+  .job-list{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;}
+  .job{
+    display:flex;gap:15px;background:var(--panel);
+    border:1px solid var(--line);border-radius:var(--radius);
+    padding:18px 20px;
+  }
+  .job .badge{
+    flex-shrink:0;width:46px;height:46px;border-radius:10px;
+    display:flex;align-items:center;justify-content:center;
+    font-weight:800;font-size:15px;color:#1c1305;
+    background:linear-gradient(135deg,var(--gold-soft),var(--gold));
+  }
+  .job h3{font-size:16.5px;margin-bottom:6px;}
+  .job p{font-size:14px;color:var(--muted);}
+
+  /* 剧情时间线 */
+  .timeline{position:relative;padding-left:26px;}
+  .timeline::before{
+    content:"";position:absolute;left:7px;top:6px;bottom:6px;width:2px;
+    background:linear-gradient(var(--gold),rgba(95,208,216,.35));
+  }
+  .step{position:relative;padding-bottom:26px;}
+  .step:last-child{padding-bottom:0;}
+  .step::before{
+    content:"";position:absolute;left:-26px;top:7px;
+    width:16px;height:16px;border-radius:50%;
+    background:var(--bg);border:3px solid var(--gold);
+  }
+  .step h3{font-size:17px;margin-bottom:7px;}
+  .step p{font-size:14.5px;color:var(--muted);}
+
+  /* 表格 */
+  .table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--radius);}
+  table{width:100%;border-collapse:collapse;min-width:620px;font-size:14.5px;}
+  th,td{padding:13px 16px;text-align:left;border-bottom:1px solid var(--line);}
+  th{background:#1b2439;color:var(--gold-soft);font-weight:700;white-space:nowrap;}
+  tbody tr:last-child td{border-bottom:none;}
+  tbody tr:nth-child(even){background:rgba(255,255,255,.016);}
+  td{color:var(--muted);}
+  td:first-child{color:var(--text);font-weight:600;}
+
+  /* 新手指南 + 侧栏 */
+  .guide-grid{display:grid;grid-template-columns:1.5fr 1fr;gap:26px;align-items:start;}
+  .guide-list{display:grid;gap:14px;}
+  .guide-item{
+    background:var(--panel);border:1px solid var(--line);
+    border-left:3px solid var(--cyan);border-radius:10px;
+    padding:16px 18px;
+  }
+  .guide-item h3{font-size:16px;margin-bottom:7px;}
+  .guide-item p{font-size:14.3px;color:var(--muted);}
+  .side-box{
+    background:linear-gradient(160deg,#1c2540,#151d2f);
+    border:1px solid var(--line);border-radius:var(--radius);
+    padding:22px 20px;
+  }
+  .side-box h3{font-size:16.5px;margin-bottom:14px;color:var(--gold-soft);}
+  .side-box ul{list-style:none;display:grid;gap:12px;}
+  .side-box li{font-size:14.2px;color:var(--muted);padding-left:16px;position:relative;}
+  .side-box li::before{
+    content:"";position:absolute;left:0;top:9px;
+    width:6px;height:6px;border-radius:50%;background:var(--gold);
+  }
+
+  /* FAQ */
+  .faq{display:grid;gap:12px;}
+  details{
+    background:var(--panel);border:1px solid var(--line);
+    border-radius:10px;padding:16px 20px;transition:.2s;
+  }
+  details[open]{border-color:rgba(232,178,58,.45);}
+  summary{
+    cursor:pointer;font-weight:700;font-size:16px;list-style:none;
+    display:flex;justify-content:space-between;align-items:center;gap:14px;
+  }
+  summary::-webkit-details-marker{display:none;}
+  summary::after{
+    content:"+";color:var(--gold);font-size:19px;font-weight:700;flex-shrink:0;
+  }
+  details[open] summary::after{content:"–";}
+  details p{margin-top:12px;font-size:14.5px;color:var(--muted);}
+
+  /* 页脚 */
+  footer.site-foot{
+    background:#0a0f1b;border-top:1px solid var(--line);
+    padding:44px 0 26px;font-size:14px;
+  }
+  .foot-grid{
+    display:grid;grid-template-columns:1.6fr 1fr 1fr;gap:34px;
+    padding-bottom:28px;border-bottom:1px solid var(--line);
+  }
+  .foot-grid h4{font-size:15px;margin-bottom:14px;color:var(--gold-soft);}
+  .foot-grid p{color:var(--muted);font-size:14px;max-width:420px;}
+  .foot-grid ul{list-style:none;display:grid;gap:9px;}
+  .foot-grid a{color:var(--muted);font-size:14px;transition:.2s;}
+  .foot-grid a:hover{color:var(--gold-soft);}
+  .foot-bottom{
+    padding-top:20px;display:flex;justify-content:space-between;
+    flex-wrap:wrap;gap:10px;color:#6d7a94;font-size:13px;
+  }
+
+  /* 响应式 */
+  @media (max-width:980px){
+    .hero-grid{grid-template-columns:1fr;gap:32px;}
+    .hero h1{font-size:33px;}
+    .grid-3{grid-template-columns:repeat(2,1fr);}
+    .guide-grid{grid-template-columns:1fr;}
+    .foot-grid{grid-template-columns:1fr 1fr;}
+  }
+  @media (max-width:680px){
+    body{font-size:15.5px;}
+    .head-inner{height:auto;flex-direction:column;align-items:flex-start;padding:12px 0;gap:8px;}
+    nav.main-nav ul{gap:2px;}
+    nav.main-nav a{padding:6px 10px;font-size:14px;}
+    .hero{padding:44px 0 40px;}
+    .hero h1{font-size:27px;}
+    section{padding:42px 0;}
+    .sec-head h2{font-size:22px;}
+    .grid-3{grid-template-columns:1fr;}
+    .job-list{grid-template-columns:1fr;}
+    .foot-grid{grid-template-columns:1fr;gap:24px;}
+  }
+</style>
+</head>
+<body>
+
+<header class="site-head">
+  <div class="wrap head-inner">
+    <div class="logo">
+      <span class="mark">弧</span>
+      弧光之源2 · 资料站
+    </div>
+    <nav class="main-nav" aria-label="主导航">
+      <ul>
+        <li><a href="#intro">作品概览</a></li>
+        <li><a href="#system">战斗系统</a></li>
+        <li><a href="#job">职业转职</a></li>
+        <li><a href="#story">剧情结构</a></li>
+        <li><a href="#guide">新手指南</a></li>
+        <li><a href="#faq">常见问题</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+  <!-- 首屏 -->
+  <section class="hero" id="intro">
+    <div class="wrap hero-grid">
+      <div>
+        <span class="tag">SRPG · 战棋角色扮演</span>
+        <h1>弧光之源2：<em>战棋玩法与角色养成的完整入门解析</em></h1>
+        <p class="lead">
+          弧光之源2是一款以方格战场、回合制行动和角色转职为核心的日式战棋角色扮演游戏。
+          玩家需要在有限的地形与行动顺序中安排队伍站位，通过职业成长与技能搭配推进关卡与剧情。
+          本页把系统机制、职业方向、剧情节奏和上手要点整理成一份便于查阅的参考。
+        </p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="#system">了解战斗系统</a>
+          <a class="btn btn-ghost" href="#guide">查看新手指南</a>
+        </div>
+      </div>
+
+      <aside class="hero-card">
+        <h2>作品速览</h2>
+        <ul>
+          <li><span class="k">类型</span>回合制战棋角色扮演（SRPG）</li>
+          <li><span class="k">核心</span>方格移动、行动顺序、属性相克</li>
+          <li><span class="k">成长</span>等级提升与职业转职双线并行</li>
+          <li><span class="k">节奏</span>战斗与剧情交替推进</li>
+          <li><span class="k">难度</span>随关卡推进逐步提升，重视站位</li>
+        </ul>
+      </aside>
+    </div>
+  </section>
+
+  <!-- 战斗系统 -->
+  <section id="system">
+    <div class="wrap">
+      <div class="sec-head">
+        <h2>战斗系统：站位比数值更重要</h2>
+        <p>战棋类作品的乐趣，往往在于用有限的行动次数换取最大的战场收益。理解下面几个机制，能显著降低前期的挫败感。</p>
+      </div>
+
+      <div class="grid-3">
+        <article class="card">
+          <div class="ico">01</div>
+          <h3>行动顺序与回合</h3>
+          <p>敌我双方按各自的行动值或固定顺序轮流行动。提前判断“谁先动”，往往比单纯堆攻击力更能决定一场战斗的走向。</p>
+        </article>
+        <article class="card">
+          <div class="ico">02</div>
+          <h3>地形与移动力</h3>
+          <p>不同地形会影响移动消耗，部分地形还会提供防御加成。把前排放在狭窄通道，可以大幅减少同时被攻击的敌人数量。</p>
+        </article>
+        <article class="card">
+          <div class="ico">03</div>
+          <h3>属性与克制关系</h3>
+          <p>攻击类型与防御类型之间存在相性差异。用克制的一方出手，通常比用高等级但被克制的角色更有效率。</p>
+        </article>
+        <article class="card">
+          <div class="ico">04</div>
+          <h3>技能与消耗资源</h3>
+          <p>技能通常需要消耗行动资源或冷却回合。把高消耗技能留给关键目标，避免在杂兵身上提前耗尽输出手段。</p>
+        </article>
+        <article class="card">
+          <div class="ico">05</div>
+          <h3>侧击与背击</h3>
+          <p>从侧面或背后发起攻击，往往能获得额外的命中或伤害收益。绕后需要计算移动距离，是战棋进阶的常见思路。</p>
+        </article>
+        <article class="card">
+          <div class="ico">06</div>
+          <h3>撤退与保存战力</h3>
+          <p>部分关卡允许撤退或分阶段推进。当角色濒危时，主动后撤一回合往往比强行换血更划算。</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- 职业转职 -->
+  <section class="alt" id="job">
+    <div class="wrap">
+      <div class="sec-head">
+        <h2>职业与转职：决定队伍的功能分工</h2>
+        <p>转职系统的意义不只是数值提升，更在于改变角色的战场定位。组建队伍时，先想清楚需要哪些功能，再决定培养方向。</p>
+      </div>
+
+      <div class="job-list">
+        <article class="job">
+          <div class="badge">前</div>
+          <div>
+            <h3>近战前锋类</h3>
+            <p>承担吸收伤害与卡位职责，通常拥有较高的生命与防御成长。适合站在通道口或保护后排，但要注意不要被多名敌人同时包围。</p>
+          </div>
+        </article>
+        <article class="job">
+          <div class="badge">远</div>
+          <div>
+            <h3>远程输出类</h3>
+            <p>依靠射程优势在安全位置输出，生命值通常偏低。需要前排为其创造视线与站位空间，一旦被近身会非常被动。</p>
+          </div>
+        </article>
+        <article class="job">
+          <div class="badge">法</div>
+          <div>
+            <h3>法术与范围伤害类</h3>
+            <p>擅长处理成群敌人，但施法资源有限。合理规划施法时机，可以在关键回合一次性清理掉推进路线上的阻碍。</p>
+          </div>
+        </article>
+        <article class="job">
+          <div class="badge">辅</div>
+          <div>
+            <h3>治疗与辅助类</h3>
+            <p>负责回复、增益与解除异常状态。辅助角色的价值不完全体现在输出面板上，却常常是长线关卡能否稳住的关键。</p>
+          </div>
+        </article>
+      </div>
+
+      <div class="table-wrap" style="margin-top:26px;">
+        <table>
+          <caption class="sr-only" style="position:absolute;left:-9999px;">弧光之源2队伍配置参考</caption>
+          <thead>
+            <tr>
+              <th>队伍位置</th>
+              <th>主要职责</th>
+              <th>培养侧重</th>
+              <th>常见误区</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>前排</td>
+              <td>承伤、卡位、限制敌人推进</td>
+              <td>生命、防御、格挡类被动</td>
+              <td>只堆攻击，导致站不住</td>
+            </tr>
+            <tr>
+              <td>中排</td>
+              <td>主力输出与技能衔接</td>
+              <td>攻击、命中、行动效率</td>
+              <td>忽视命中，关键回合落空</td>
+            </tr>
+            <tr>
+              <td>后排</td>
+              <td>远程压制、治疗与增益</td>
+              <td>射程、资源回复、生存</td>
+              <td>站位过前，被突进秒杀</td>
+            </tr>
+            <tr>
+              <td>机动位</td>
+              <td>绕后、抢点、补刀</td>
+              <td>移动力、行动顺序</td>
+              <td>单独深入，脱离支援</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- 剧情结构 -->
+  <section id="story">
+    <div class="wrap">
+      <div class="sec-head">
+        <h2>剧情与关卡节奏</h2>
+        <p>战棋作品的体验通常由“剧情段落—战斗关卡—角色成长”三段循环构成。了解这个节奏，有助于安排练级与资源分配。</p>
+      </div>
+
+      <div class="timeline">
+        <div class="step">
+          <h3>序章：熟悉规则</h3>
+          <p>前期关卡多用于教学，敌人配置相对简单。这一阶段重点是把移动、攻击、技能和行动顺序的基本操作形成习惯，不必急于追求完美通关。</p>
+        </div>
+        <div class="step">
+          <h3>展开：队伍成型</h3>
+          <p>随着可用角色增加，队伍开始出现功能分化。此时应根据关卡特点调整出战名单，而不是固定使用同一套阵容。</p>
+        </div>
+        <div class="step">
+          <h3>转折：难度上升</h3>
+          <p>中期关卡往往加入增援、狭窄地形或特殊目标。单纯依靠等级压制会变得吃力，需要更认真地规划走位与技能释放顺序。</p>
+        </div>
+        <div class="step">
+          <h3>终盘：资源与取舍</h3>
+          <p>后期资源相对紧张，培养方向需要有所取舍。优先保证核心角色成型，通常比平均分配经验更稳妥。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 新手指南 -->
+  <section class="alt" id="guide">
+    <div class="wrap">
+      <div class="sec-head">
+        <h2>新手入门要点</h2>
+        <p>以下建议基于战棋类作品的通用规律整理，具体数值与关卡设计请以游戏内实际表现为准。</p>
+      </div>
+
+      <div class="guide-grid">
+        <div class="guide-list">
+          <article class="guide-item">
+            <h3>先看目标，再动手</h3>
+            <p>进入关卡后先确认胜利条件与失败条件。是击败指定目标、守住阵地，还是坚持若干回合？目标不同，队伍的推进方式完全不同。</p>
+          </article>
+          <article class="guide-item">
+            <h3>不要平均分配经验</h3>
+            <p>战棋作品的关卡强度通常按队伍整体水平设计。与其让所有人都在中等水平徘徊，不如先让三到四名核心角色形成明显优势。</p>
+          </article>
+          <article class="guide-item">
+            <h3>善用“等待”与“防御”</h3>
+            <p>不行动也是一种策略。把角色停在有利地形上结束回合，诱使敌人进入不利位置，往往比盲目前压更有效。</p>
+          </article>
+          <article class="guide-item">
+            <h3>养成查看敌方信息的习惯</h3>
+            <p>动手前先看敌人的移动范围、攻击范围和技能类型。判断哪些格子是安全区，是减少无谓损失的最直接方法。</p>
+          </article>
+          <article class="guide-item">
+            <h3>保留关键道具</h3>
+            <p>回复类与解除异常的道具，尽量留到真正困难的关卡使用。前期消耗掉，后期可能会陷入被动。</p>
+          </article>
+        </div>
+
+        <aside class="side-box">
+          <h3>容易踩的坑</h3>
+          <ul>
+            <li>把治疗角色放到前排，导致其被优先击杀。</li>
+            <li>为了追击残血敌人，让输出角色脱离队伍保护。</li>
+            <li>忽视行动顺序，让低速角色白白承受一轮攻击。</li>
+            <li>在非关键关卡消耗掉全部回复道具。</li>
+            <li>只培养攻击型角色，缺少辅助与控制的搭配。</li>
+          </ul>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq">
+    <div class="wrap">
+      <div class="sec-head">
+        <h2>常见问题</h2>
+        <p>针对初次接触弧光之源2这类战棋作品的玩家，整理了一些高频疑问。</p>
+      </div>
+
+      <div class="faq">
+        <details open>
+          <summary>没有战棋游戏经验，能直接上手吗？</summary>
+          <p>可以。战棋类作品的核心操作并不复杂，难点主要在思路而非手速。前期关卡通常会逐步引入规则，只要愿意在每回合动手前多想一步站位，适应过程不会太长。</p>
+        </details>
+        <details>
+          <summary>角色练错了方向怎么办？</summary>
+          <p>多数战棋作品都提供一定程度的调整空间，例如转职分支或重新培养。如果发现方向不合适，可以先让该角色承担次要职责，把资源集中到已经成型的核心成员身上。</p>
+        </details>
+        <details>
+          <summary>关卡失败需要重开吗？</summary>
+          <p>视作品设计而定。部分关卡允许撤退后重整队伍再挑战。若失败条件已经触发，通常需要重新开始该关卡。建议在关键回合前保存进度，避免重复劳动。</p>
+        </details>
+        <details>
+          <summary>如何判断一个角色是否值得培养？</summary>
+          <p>可以从三点观察：成长空间、技能实用性、以及在当前队伍中是否填补了空缺功能。单纯看初始数值容易误判，实际使用几场战斗后的手感更有参考价值。</p>
+        </details>
+        <details>
+          <summary>为什么明明等级更高，还是打不过？</summary>
+          <p>等级只代表基础数值，战棋战斗还受地形、属性相性、行动顺序和站位影响。等级领先但被包围、被克制，或者输出角色暴露在敌方射程内，都可能迅速失去优势。</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-foot">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <h4>关于本站</h4>
+        <p>本站为弧光之源2相关的玩法资料整理页，内容围绕战棋机制、职业转职与角色养成展开，供玩家查阅与交流参考。具体游戏内容请以官方版本为准。</p>
+      </div>
+      <div>
+        <h4>内容导航</h4>
+        <ul>
+          <li><a href="#intro">作品概览</a></li>
+          <li><a href="#system">战斗系统</a></li>
+          <li><a href="#job">职业转职</a></li>
+          <li><a href="#story">剧情结构</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>玩家帮助</h4>
+        <ul>
+          <li><a href="#guide">新手指南</a></li>
+          <li><a href="#faq">常见问题</a></li>
+          <li><a href="#system">站位思路</a></li>
+          <li><a href="#job">队伍配置</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>弧光之源2 · 战棋玩法资料整理</span>
+      <span>内容仅供参考，请以游戏内实际表现为准</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // 导航平滑滚动兜底（部分旧浏览器不支持 scroll-behavior）
+  document.querySelectorAll('nav.main-nav a[href^="#"]').forEach(function(link){
+    link.addEventListener('click', function(e){
+      var target = document.querySelector(this.getAttribute('href'));
+      if(target){
+        e.preventDefault();
+        var top = target.getBoundingClientRect().top + window.pageYOffset - 76;
+        window.scrollTo({top: top, behavior: 'smooth'});
+      }
+    });
+  });
+
+  // FAQ 手风琴：展开一项时收起其他项，便于阅读
+  var faqs = document.querySelectorAll('.faq details');
+  faqs.forEach(function(item){
+    item.addEventListener('toggle', function(){
+      if(this.open){
+        faqs.forEach(function(other){
+          if(other !== item){ other.open = false; }
+        });
+      }
+    });
+  });
+</script>
+
+</body>
+  </html>
